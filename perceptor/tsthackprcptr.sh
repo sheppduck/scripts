@@ -6,7 +6,7 @@ NS=tst-deploy-dockerhub
 createNewApp() {
   NEW_APP=$1
   PODS=$2
-  y_pod=$1                                                                                                               
+  my_pod=$1                                                                                                               
   echo "CNA TESTING Deploying from Dockerhub with $NEW_APP and we want to see $PODS pods!"
   # set -x
   echo "CNA Test: Deploying directly via DockerHUB"
@@ -23,10 +23,14 @@ createNewApp() {
 	tstAnnotate $i
 	retVal=$?
 	passed=0
-	if [[ $retVal -gt 5 ]] ; then
+    failed=0
+	if [[ $retVal -gt 0 ]] ; then
 		echo "failed annotation test on $i. failing fast !"
-		(( passed++ ))
+		(( failed++ ))
 		exit $retVal
+    else
+        echo "Passed POD Annotations test on $i!"
+        (( passed++ ))
 	fi
   done
   echo "TEST PASSED for all pods in $NEW_APP"
