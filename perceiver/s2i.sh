@@ -2,14 +2,7 @@
 
 creates2i() {
   NS=puma-test-app
-  NEW_APP=$1
-  PODS=$2
-#  if [[ "$PODS" -eq "" ]] ; then
-#      echo "ERROR: NO PODS FOUND, EXITING!!"
-#      exit 25
-#  else
-#      echo "Nice! PODS found: $PODS."
-#  fi
+  PODS=2
   my_pod=$1
   # Create a project to create the S2I in
   # First let's see if the project exists, nuke it if so
@@ -26,12 +19,12 @@ creates2i() {
   echo "Deploying the S2i App..."
   oc new-app https://github.com/openshift/sti-ruby.git \
       --context-dir=2.0/test/puma-test-app
-  sleep 30
   until [[ `oc get pods | grep -v STATUS | wc -l` -ge "$PODS" ]] ; do
       echo "[createS2i]: Waiting on PODS to come up, so far: `oc get pods | grep -v NAME`"
       sleep 3
   done
   echo "Done waiting!"
+  sleep 5
   for i in `oc get pods | grep -v build | grep -v deploy | grep -v NAME | cut -d ' ' -f 1` ; do
       tstAnnotate $i
       retVal=$?
@@ -41,7 +34,7 @@ creates2i() {
           echo :"FAIL: [createS2i] Failed POD Annotations test on $i. Failing Fast!"
           (( failed++ ))
       else
-          echo "[createS2i] Passed POD Annotations rtest on $i!"
+          echo "[createS2i] Passed POD Annotations test on $i!"
           (( passed++ ))
       fi
   done

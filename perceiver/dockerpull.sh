@@ -10,25 +10,26 @@ sanity_check() {
       exit 22
     fi
 }
-createDockerPush() {
+createDockerPull() {
   NS=tst-docker-pull
-  NEW_APP=$1
-  PODS=$2
-  if [[ "$PODS" -eq "" ]] ; then
-      echo "NO PODS !!!!!!! EXITING"
-      exit 33
+  PODS=1
+  if [[ -z $NS ]] ; then
+    echo "Sweet, NS: $NS not found.  We can begin."
+  else
+      echo "Dang it, NS: $NS found, FRENZY needs to delete this NS!"
+      burnItDown $NS
   fi 
-  my_pods=$1
-  echo/ "TEST: Deploying with docker pull using $NEW_APP, we want to see $PODS pods"
+  echo "TEST: Deploying with docker pull using $NEW_APP, we want to see $PODS pods"
   docker pull alpine
   oc new-project $NS
-  oc new-app $NEW_APP
+  oc new-app docker.io/alpine:latest
   echo "PODS equals: $PODS"
-  until [[ `oc get pods | grep -v STATUS | wc -l` -ge "$PODS" ]] ; do
+  until [[ `oc get pods | grep -v STATUS | grep -v build | grep -v deploy | grep Completed | wc -l` -ge "$PODS" ]] ; do
       echo "createDockerPull: Waiting on POD(s) to come up, so far: `oc get pods| grep -v NAME`"
       sleep 3
   done
   echo "Done waiting!"
+  sleep 5
   for i in `oc get pods | grep -v build | grep -v deploy | grep -v NAME | cut -d ' ' -f 1` ; do
       tstAnnotate $i
       retVal=$?
@@ -41,7 +42,6 @@ createDockerPush() {
       else
           echo "Passed POD Annotations on $i"
           (( passed++ ))
-
       fi
   done
 }
@@ -70,5 +70,5 @@ burnItDown() {
 }
 
 sanity_check
-createDockerPush docker.io/alpine:latest 1
+createDockerPull
 burnItDown

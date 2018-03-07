@@ -14,8 +14,6 @@ sanity_check() {
 createTemplate() {
   NS=php
   #NEW_APP=$1
-  PODS=$2
-  #my_pod=$1
   # Create the project to deploy to
   # First let's see if the project exists, nuke it if so
   if [[ -z $NS ]] ; then
@@ -28,12 +26,13 @@ createTemplate() {
   oc new-project $NS
   oc new-app -f /usr/share/openshift/examples/quickstart-templates/rails-postgresql.json
   echo "PODs variable is: $PODS"
-  sleep 30
-  until [[ `oc get pods | grep -v STATUS | wc -l` -ge "$PODS" ]] ; do
+  sleep 15
+  until [[ `oc get pods | grep "rails-postgresql-example-1-hook-pre"` ]] ; do
       echo "[createTemplate]: WAiting on POD9s) to come up, so far: `oc get pods | grep -v NAME`"
-      sleep 3
+      sleep 2
   done
   echo "Done waiting!"
+  sleep 10
   for i in `oc get pods | grep -v build | grep -v deploy | grep -v NAME | cut -d ' ' -f 1` ; do
       tstAnnotate $i
       retVal=$?
