@@ -1,61 +1,39 @@
 #!/bin/bash
 
-#createDockerHub() {
-#  set -x
-#  WAIT_TIME=$((10))
-#  echo "Test: Deploying directly via DockerHUB"
-#  oc new-project tst-deploy-dockerhub
-#  oc new-app centos/python-35-centos7~https://github.com/openshift/django-ex.git
-#  sleep $WAIT_TIME
-  # Store the output (in an array perhaps?) and pass the pods to the tstAnnotate function??
-#  output=$(oc get pods | grep -i django | cut -d' ' -f 1 | sed 's/:.*//')
-#  x=0
-#  for my_pod in  ${output[@]}; do
-#    echo $my_pod;
-#    test2 $my_pod
-#    echo "function exit was $?"
-#    read x
-#     tstAnnotate $my_pod
-#     if $? -gt 0 ; then 
-#       let x=((++X))
-#     fi
-#  done
-
- #  echo "ALL TESTS RAN : FAILURES =$x"
-#  echo "Exiting w code $x (the number of failures)"
-#  exit $x
-# }
-
+# TestRail Test Case C7440
+# Tested as working Feb 2018
 createDockerHub() {
-  # set -x
-  WAIT_TIME=$((10))
-  echo "Test: Deploying directly via DockerHUB"
-  oc new-project tst-deploy-dockerhub
-  oc new-app centos/python-35-centos7~https://github.com/openshift/django-ex.git
-  i=0
-  sleep $WAIT_TIME
-  #until oc get pods | grep -i django | cut -d' ' -f 1 ; do
-  #  sleep 2;
-  #  (( i++ ))
-  # done
-  # Store the output in an array and pass the pods to the tstAnnotate function
-  output=$(oc get pods | grep -i django | cut -d' ' -f 1 | sed 's/:.*//')
-  if [ -z $output ] ; then
-    echo "ERROR: No POD(s) found matching $output! - Exiting!"
-    return 1;
-  else
-    echo "POD(s) $my_pod found, w00t! Moving on..."
+  NS=tst-deploy-dockerhub
+  NEW_APP=$1
+  PODS=$2
+  if [[ -z "$PODS" ]] ; then
+    echo "ERROR: NO PODS FOUND, EXITING!!!"
+    exit 24
   fi
-  x=0
-  for my_pod in ${output[@]} ; do
-    echo $my_pod;
-    tstAnnotate $my_pod
-    echo "Function exit was $?"
-    if $? -gt 0 ; then
-      (( x++ ))
+  echo "Test: Deploying directly via DockerHUB with $NEW_APP and we want to see $PODS"
+  oc new-project $NS
+  oc new-app $NEW_APP
+  echo "PODS equals: $PODS"
+  until [[ `oc get pods | grep -v STATUS | wc -l` -ge "$PODS" ]] ; do
+    echo "createDockerHub: Waiing on PODs to come up, so far: `oc get pods | grep -v NAME`"
+    sleep 3
+  done
+  echo "Done waiting!"
+  for i in `oc get pods | grep -v build | grep -v deploy | grep -v NAME | cut -d ' ' -f 1` ; do
+    tstAnnotate $i
+    retVal=$?
+    passed=0
+    failed=0
+    if [[ $retVal -gt 0 ]] ; then
+      echo "Failed POD Annotations test on $i. Failing Fast!"
+      (( failed++ ))
+      exit $retVal
+    else
+      echo "Passed POD Annoations test on $i!"
+      (( passed++ ))
     fi
   done
-  echo "Test Ran : FAILURES = $x"
+  echo "createDockerHub Test Passed for all PODs in $NEW_APP."
 }
 
 # Verify POD has been annotated with "BlackDuck"
