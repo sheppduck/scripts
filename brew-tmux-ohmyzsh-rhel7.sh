@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # ============================
 # Install BREW and LinuxBrew
 # ============================
@@ -79,4 +81,9 @@ echo "export PATH=$LINUXBREWHOME/bin:$PATH" >> ~/.bashrc
 echo "export MANPATH=$LINUXBREWHOME/man:$MANPATH" >> ~/.bashrc
 echo "export PKG_CONFIG_PATH=$LINUXBREWHOME/lib64/pkgconfig:$LINUXBREWHOME/lib/pkgconfig:$PKG_CONFIG_PATH" >> ~/.bashrc
 echo "export LD_LIBRARY_PATH=$LINUXBREWHOME/lib64:$LINUXBREWHOME/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
+# ===============================
+
+# ===============================
+# Try oh-my-vim install JIC
+curl -L https://raw.github.com/liangxianzhe/oh-my-vim/master/tools/install.sh | sh
 # ===============================
