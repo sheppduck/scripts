@@ -1,0 +1,6 @@
+# Prepend to each line
+sed -i -e 's/^/prefix/' file-to-mod
+
+# Append suffix to each line
+sed  -i -e '/s/$/suffix/' file-to-mod
+
