@@ -1,0 +1,49 @@
+# Create an OSEv3 group that contains the masters and nodes groups
+[OSEv3:children]
+masters
+nodes
+etcd
+#lb
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+# SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+
+# If ansible_ssh_user is not root, ansible_become must be set to true
+ansible_become=false
+
+# Deploy OpenShift origin.
+deployment_type=openshift-enterprise
+
+# CRI-O options
+openshift_use_crio=true
+openshift_crio_use_rpm=true
+openshift_crio_enable_docker_gc=true
+openshift_crio_docker_gc_node_selector={'runtime': 'cri-o'}
+
+openshift_public_hostname=
+#openshift_master_default_subdomain=${master_default_subdomain}
+
+# Use an htpasswd file as the indentity provider.
+openshift_master_identity_providers=[{'name': 'allow_all', 'login': 'true', 'challenge': 'true', 'mappingMethod': 'claim', 'kind': 'AllowAllPasswordIdentityProvider'}, {'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/users.htpasswd'}]
+
+openshift_hosted_metrics_deploy=true
+openshift_metrics_install_metrics=true
+use_cluster_metrics=true
+openshift_clock_enabled=true
+
+openshift_disable_check=memory_availability,disk_availability
+openshift_web_console_nodeselector={'region':'infra'}
+
+
+[masters]
+openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true
+
+[etcd]
+<IP-OR-DNS_Name>
+
+[nodes]
+<IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
+# <IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
+# <IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
