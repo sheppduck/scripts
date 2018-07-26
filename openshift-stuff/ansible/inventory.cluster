@@ -9,6 +9,10 @@ etcd
 [OSEv3:vars]
 # SSH user, this user should allow ssh based auth without requiring a password
 ansible_ssh_user=root
+#CRI-O Stuff below
+openshift_crio_use_rpm=True
+openshift_use_crio=True
+oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
 
 # If ansible_ssh_user is not root, ansible_become must be set to true
 ansible_become=false
@@ -44,6 +48,6 @@ openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedul
 <IP-OR-DNS_Name>
 
 [nodes]
-<IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
-# <IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
-# <IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}"
+<IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}" node-role.kubernetes.io/compute: "true"
+# <IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}" node-role.kubernetes.io/compute: "true"
+# <IP-OR-DNS_Name> openshift_node_labels="{'region': 'primary', 'zone': 'default'}" node-role.kubernetes.io/compute: "true" 
