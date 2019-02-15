@@ -1,2 +1,0 @@
-#!/bin/bash
-while true ; do fio fio_iops.fio ; done
