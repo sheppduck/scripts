@@ -1,0 +1,10 @@
+apt-get update
+# aws monitoring
+apt-get install unzip
+apt-get install libwww-perl libdatetime-perl
+# stress
+apt-get install screen fio stress iperf3 hdparm siege cpulimit
+# mysql
+apt-get install mysql-client
+#disk usage
+apt-get install discus
