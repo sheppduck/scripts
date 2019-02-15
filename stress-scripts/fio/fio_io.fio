@@ -1,0 +1,15 @@
+[seq-read]
+rw=read
+size=1g
+directory=/root
+filename=ssd.test.io
+ioengine=libaio
+iodepth=8
+direct=1
+invalidate=1
+blocksize=1M
+rwmixread=100
+rwmixwrite=0
+numjobs=5
+group_reporting
+norandommap
