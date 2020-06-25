@@ -1,0 +1,7 @@
+# some shit I like 
+
+ grep -i "fail\|error\|illegal\|exception\|NaN\|infinite\|infinity\loop"
+ 
+ while true ; do ; sleep 3 ; done
+ 
+ 
